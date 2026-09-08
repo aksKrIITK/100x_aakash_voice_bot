@@ -18,6 +18,7 @@ export function useSpeechSynthesis(): UseSpeechSynthesisReturn {
   const [isSupported, setIsSupported] = useState<boolean>(true);
   const lastSpokenTextRef = useRef<string>('');
   const currentAudioRef = useRef<HTMLAudioElement | null>(null);
+  const speechIdRef = useRef<number>(0);
 
   useEffect(() => {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
@@ -26,6 +27,9 @@ export function useSpeechSynthesis(): UseSpeechSynthesisReturn {
   }, []);
 
   const stop = useCallback(() => {
+    // Increment ID to cancel all pending async TTS fetch calls
+    speechIdRef.current += 1;
+
     if (currentAudioRef.current) {
       currentAudioRef.current.pause();
       currentAudioRef.current.currentTime = 0;
@@ -38,7 +42,8 @@ export function useSpeechSynthesis(): UseSpeechSynthesisReturn {
     setIsPaused(false);
   }, [isSupported]);
 
-  const speakFallbackBrowser = useCallback((text: string) => {
+  const speakFallbackBrowser = useCallback((text: string, currentReqId: number) => {
+    if (speechIdRef.current !== currentReqId) return;
     if (!isSupported || !window.speechSynthesis || !text) return;
 
     window.speechSynthesis.cancel();
@@ -67,17 +72,21 @@ export function useSpeechSynthesis(): UseSpeechSynthesisReturn {
     }
 
     utterance.onstart = () => {
-      setIsSpeaking(true);
-      setIsPaused(false);
+      if (speechIdRef.current === currentReqId) {
+        setIsSpeaking(true);
+        setIsPaused(false);
+      }
     };
 
     utterance.onend = () => {
-      setIsSpeaking(false);
-      setIsPaused(false);
+      if (speechIdRef.current === currentReqId) {
+        setIsSpeaking(false);
+        setIsPaused(false);
+      }
     };
 
     utterance.onerror = (e) => {
-      if (e.error !== 'canceled') {
+      if (e.error !== 'canceled' && speechIdRef.current === currentReqId) {
         setIsSpeaking(false);
         setIsPaused(false);
       }
@@ -89,10 +98,17 @@ export function useSpeechSynthesis(): UseSpeechSynthesisReturn {
   const speak = useCallback(async (text: string) => {
     if (!text) return;
     stop();
+
+    const currentReqId = speechIdRef.current;
     lastSpokenTextRef.current = text;
 
     // 1. First try fetching realistic neural Indian English male audio from backend (/api/v1/tts)
     const audioBlob = await apiService.fetchTTSAudio(text, 'en-IN-PrabhatNeural');
+
+    // If a newer speech request came in while fetching, discard this old one
+    if (speechIdRef.current !== currentReqId) {
+      return;
+    }
 
     if (audioBlob && audioBlob.size > 0) {
       try {
@@ -101,13 +117,19 @@ export function useSpeechSynthesis(): UseSpeechSynthesisReturn {
         currentAudioRef.current = audio;
 
         audio.onplay = () => {
-          setIsSpeaking(true);
-          setIsPaused(false);
+          if (speechIdRef.current === currentReqId) {
+            setIsSpeaking(true);
+            setIsPaused(false);
+          } else {
+            audio.pause();
+          }
         };
 
         audio.onended = () => {
-          setIsSpeaking(false);
-          setIsPaused(false);
+          if (speechIdRef.current === currentReqId) {
+            setIsSpeaking(false);
+            setIsPaused(false);
+          }
           URL.revokeObjectURL(audioUrl);
           currentAudioRef.current = null;
         };
@@ -115,7 +137,9 @@ export function useSpeechSynthesis(): UseSpeechSynthesisReturn {
         audio.onerror = () => {
           URL.revokeObjectURL(audioUrl);
           currentAudioRef.current = null;
-          speakFallbackBrowser(text);
+          if (speechIdRef.current === currentReqId) {
+            speakFallbackBrowser(text, currentReqId);
+          }
         };
 
         await audio.play();
@@ -125,8 +149,10 @@ export function useSpeechSynthesis(): UseSpeechSynthesisReturn {
       }
     }
 
-    // 2. Fallback to browser SpeechSynthesis
-    speakFallbackBrowser(text);
+    // 2. Fallback to browser SpeechSynthesis if request is still active
+    if (speechIdRef.current === currentReqId) {
+      speakFallbackBrowser(text, currentReqId);
+    }
   }, [stop, speakFallbackBrowser]);
 
   const pause = useCallback(() => {

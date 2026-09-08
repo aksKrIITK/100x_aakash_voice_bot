@@ -2,12 +2,10 @@ from typing import Dict
 
 GOLDEN_ANSWERS: Dict[str, str] = {
     "life_story": (
-        "I studied Electrical Engineering at IIT Kanpur, which gave me a strong foundation in analytical thinking and problem-solving. "
-        "After that, I spent time studying International Politics at JNU and preparing for the civil services examination. "
-        "That period taught me how to research deeply, analyze problems from different perspectives, and make evidence-based decisions. "
+        "I studied Electrical Engineering at IIT Kanpur and later International Politics at JNU, building strong analytical, research, and problem-solving skills."
         "Eventually, I realized I wanted to build products directly, so I moved into software engineering. "
         "Over the years, I progressed to Lead Backend Engineer at WorldRef, leading production AI systems and a backend team, and earlier also founded Godizy, building a SaaS product end-to-end. "
-        "Today, I'm deeply focused on agentic AI systems, FastAPI, React, PostgreSQL, and building reliable software."
+        "Now, I'm deeply focused on agentic AI systems, FastAPI, Java Spring Boot, React, PostgreSQL, and building reliable software."
     ),
     "superpower": (
         "My #1 superpower is learning quickly and turning that learning into practical, working software. "
