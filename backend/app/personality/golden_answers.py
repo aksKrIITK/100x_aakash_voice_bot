@@ -6,7 +6,7 @@ GOLDEN_ANSWERS: Dict[str, str] = {
         "After that, I spent time studying International Politics at JNU and preparing for the civil services examination. "
         "That period taught me how to research deeply, analyze problems from different perspectives, and make evidence-based decisions. "
         "Eventually, I realized I wanted to build products directly, so I moved into software engineering. "
-        "Over the years, I progressed to Lead Backend Engineer at WorldRef, leading production AI systems and a backend team, and founded Godizy, building a SaaS product end-to-end. "
+        "Over the years, I progressed to Lead Backend Engineer at WorldRef, leading production AI systems and a backend team, and earlier also founded Godizy, building a SaaS product end-to-end. "
         "Today, I'm deeply focused on agentic AI systems, FastAPI, React, PostgreSQL, and building reliable software."
     ),
     "superpower": (
