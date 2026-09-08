@@ -5,23 +5,25 @@ from typing import Optional
 INTENT_PATTERNS = {
     "life_story": [
         r"life story", r"journey", r"tell me about yourself", r"who are you", r"your background",
-        r"education", r"iit kanpur", r"jnu", r"where did you study", r"introduce yourself"
+        r"education", r"iit kanpur", r"jnu", r"where did you study", r"introduce yourself",
+        r"story in a few sentences", r"know about your life", r"tell us about your life"
     ],
     "superpower": [
-        r"superpower", r"best at", r"biggest strength", r"greatest strength", r"top skill",
-        r"what are you best at", r"stand out"
+        r"superpower", r"#1 superpower", r"number 1 superpower", r"best at", r"biggest strength",
+        r"greatest strength", r"top skill", r"what are you best at", r"stand out", r"what is your superpower",
+        r"coworkers say your superpower"
     ],
     "growth_areas": [
         r"growth area", r"improve", r"want to grow", r"areas to grow", r"working on",
-        r"top 3 areas", r"development goals"
+        r"top 3 areas", r"development goals", r"top 3 areas you'd like to grow", r"areas you'd like to grow"
     ],
     "misconceptions": [
         r"misconception", r"coworker", r"colleague", r"misunderstand", r"what do people get wrong",
-        r"wrong impression"
+        r"wrong impression", r"misconception do your coworkers have", r"coworkers have about you"
     ],
     "pushing_boundaries": [
         r"push.*limit", r"push.*boundar", r"challenge yourself", r"step out of.*comfort",
-        r"comfort zone", r"overcome limit"
+        r"comfort zone", r"overcome limit", r"push your boundaries", r"boundaries and limits"
     ],
     "strengths": [
         r"strength", r"strongest skill", r"good at", r"capabilities"

@@ -1,4 +1,4 @@
-from typing import Dict, Any, List
+from typing import Dict, Any
 
 AAKASH_PROFILE: Dict[str, Any] = {
     "name": "Aakash Kumar",
@@ -13,7 +13,19 @@ AAKASH_PROFILE: Dict[str, Any] = {
             {
                 "degree": "Master's in International Politics",
                 "institution": "Jawaharlal Nehru University (JNU)",
-                "focus": "Global politics, policy analysis, strategic thinking, multi-domain perspectives."
+                "focus": "Global politics, policy research, strategic thinking, civil services preparation."
+            }
+        ],
+        "experience": [
+            {
+                "role": "Lead Backend Engineer (progressed from Software Engineer)",
+                "company": "WorldRef",
+                "focus": "Production AI systems, backend architecture, leading backend team."
+            },
+            {
+                "role": "Founder & Full-Stack Builder",
+                "company": "Godizy",
+                "focus": "Built SaaS product end-to-end, working directly with SMB customers."
             }
         ],
         "profession": "Software Developer & AI Engineer",
