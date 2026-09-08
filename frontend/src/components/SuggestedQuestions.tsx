@@ -7,11 +7,11 @@ interface SuggestedQuestionsProps {
 }
 
 const SUGGESTED_QUESTIONS = [
-  "Tell me about your journey",
-  "What's your biggest strength?",
-  "What do you want to improve?",
-  "How do you push your limits?",
-  "What motivates you?"
+  "What should we know about your life story in a few sentences?",
+  "What's your #1 superpower?",
+  "What are the top 3 areas you'd like to grow in?",
+  "What misconception do your coworkers have about you?",
+  "How do you push your boundaries and limits?"
 ];
 
 export const SuggestedQuestions: React.FC<SuggestedQuestionsProps> = ({
