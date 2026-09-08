@@ -8,7 +8,7 @@ class Settings(BaseSettings):
     APP_ENV: str = "development"
     HOST: str = "0.0.0.0"
     PORT: int = 8000
-    CORS_ORIGINS: Union[List[str], str] = ["http://localhost:5173", "http://127.0.0.1:5173"]
+    CORS_ORIGINS: Union[List[str], str] = ["http://localhost:5173", "http://127.0.0.1:5173", "https://100x-aakash-voice-bot.vercel.app"]
     DATABASE_URL: str = ""
     REDIS_URL: str = ""
     LLM_PROVIDER: str = "openai"
