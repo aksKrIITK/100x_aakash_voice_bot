@@ -70,7 +70,7 @@ export const apiService = {
     return handleResponse<VoiceChatResponse>(res);
   },
 
-  async fetchTTSAudio(text: string, voice: string = 'en-IN-PrabhatNeural'): Promise<Blob | null> {
+  async fetchTTSAudio(text: string, voice: string = 'en-US-AndrewMultilingualNeural'): Promise<Blob | null> {
     try {
       const res = await fetch(`${API_BASE_URL}/tts`, {
         method: 'POST',

@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { VoiceState, Message } from '../types/conversation';
 import { useAudioRecorder } from './useAudioRecorder';
-import { useSpeechSynthesis } from './useSpeechSynthesis';
+import { useSpeechSynthesis, SentenceProgress } from './useSpeechSynthesis';
 import { apiService } from '../services/api';
+import { getLocalFallbackAnswer } from '../utils/localPersonalityFallback';
 
 export interface UseVoiceBotReturn {
   voiceState: VoiceState;
@@ -13,6 +14,7 @@ export interface UseVoiceBotReturn {
   errorMessage: string | null;
   micPermission: 'prompt' | 'granted' | 'denied';
   isSpeakingTTS: boolean;
+  currentSentenceIndex: number;
   startVoiceRecording: () => Promise<void>;
   stopVoiceRecording: () => Promise<void>;
   sendTextMessage: (text: string) => Promise<void>;
@@ -40,12 +42,22 @@ export function useVoiceBot(): UseVoiceBotReturn {
 
   const {
     isSpeaking: isSpeakingTTS,
+    currentSentenceIndex,
     speak,
     stop: stopTTS,
     replay: replayTTS
   } = useSpeechSynthesis();
 
   const isInitialized = useRef<boolean>(false);
+  const streamTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const activeAssistantMsgIdRef = useRef<string | null>(null);
+
+  const clearStreamTimer = useCallback(() => {
+    if (streamTimerRef.current) {
+      clearInterval(streamTimerRef.current);
+      streamTimerRef.current = null;
+    }
+  }, []);
 
   // Initialize conversation session & health check
   useEffect(() => {
@@ -53,11 +65,22 @@ export function useVoiceBot(): UseVoiceBotReturn {
     isInitialized.current = true;
 
     const init = async () => {
-      try {
-        const health = await apiService.getHealth();
-        setIsBackendHealthy(health.status === 'healthy');
-      } catch {
-        setIsBackendHealthy(false);
+      const checkHealth = async () => {
+        try {
+          const health = await apiService.getHealth();
+          if (health && health.status === 'healthy') {
+            setIsBackendHealthy(true);
+            return true;
+          }
+        } catch {
+          setIsBackendHealthy(false);
+        }
+        return false;
+      };
+
+      const isOk = await checkHealth();
+      if (!isOk) {
+        setTimeout(checkHealth, 1500);
       }
 
       try {
@@ -66,6 +89,13 @@ export function useVoiceBot(): UseVoiceBotReturn {
       } catch {
         // Fallback local conversation ID
         setConversationId(`conv-${Date.now()}`);
+      }
+
+      // Pre-warm Edge TTS connection in background to eliminate first answer latency
+      try {
+        apiService.fetchTTSAudio('Hi').catch(() => {});
+      } catch {
+        // Silent
       }
     };
 
@@ -99,11 +129,78 @@ export function useVoiceBot(): UseVoiceBotReturn {
     setVoiceState('IDLE');
   }, [resetRecorderError]);
 
+  const handleStartSpeakingWithStream = useCallback(
+    async (fullAnswer: string, assistantMsgId: string) => {
+      activeAssistantMsgIdRef.current = assistantMsgId;
+      clearStreamTimer();
+
+      let prefixText = '';
+
+      const onSentenceStart = (progress: SentenceProgress) => {
+        clearStreamTimer();
+        const sentenceWords = progress.sentence.split(/\s+/).filter(Boolean);
+        if (sentenceWords.length === 0) return;
+
+        let wordIdx = 0;
+        const currentSentenceBase = prefixText;
+        const intervalMs = Math.max(45, Math.floor((progress.durationMs * 0.88) / sentenceWords.length));
+
+        streamTimerRef.current = setInterval(() => {
+          wordIdx++;
+          const currentSentenceChunk = sentenceWords.slice(0, wordIdx).join(' ');
+          const display = currentSentenceBase
+            ? `${currentSentenceBase} ${currentSentenceChunk}`
+            : currentSentenceChunk;
+
+          setMessages(prev =>
+            prev.map(m =>
+              m.id === assistantMsgId
+                ? {
+                    ...m,
+                    content: display,
+                    streamingText: display,
+                    activeSentenceIndex: progress.index,
+                    isStreaming: true
+                  }
+                : m
+            )
+          );
+
+          if (wordIdx >= sentenceWords.length) {
+            clearStreamTimer();
+            prefixText = progress.accumulatedText;
+          }
+        }, intervalMs);
+      };
+
+      const onComplete = () => {
+        clearStreamTimer();
+        setMessages(prev =>
+          prev.map(m =>
+            m.id === assistantMsgId
+              ? {
+                  ...m,
+                  content: fullAnswer,
+                  streamingText: fullAnswer,
+                  isStreaming: false
+                }
+              : m
+          )
+        );
+        setVoiceState('IDLE');
+      };
+
+      await speak(fullAnswer, onSentenceStart, onComplete);
+    },
+    [clearStreamTimer, speak]
+  );
+
   const startVoiceRecording = useCallback(async () => {
     clearError();
+    clearStreamTimer();
     stopTTS();
     await startRecording();
-  }, [clearError, stopTTS, startRecording]);
+  }, [clearError, clearStreamTimer, stopTTS, startRecording]);
 
   const stopVoiceRecording = useCallback(async () => {
     setVoiceState('PROCESSING');
@@ -132,70 +229,122 @@ export function useVoiceBot(): UseVoiceBotReturn {
         timestamp: new Date()
       };
 
+      const assistantMsgId = `msg-${Date.now()}-assistant`;
       const assistantMsg: Message = {
-        id: `msg-${Date.now()}-assistant`,
+        id: assistantMsgId,
         role: 'assistant',
-        content: response.answer,
+        content: '',
+        streamingText: '',
+        isStreaming: true,
         timestamp: new Date()
       };
 
       setMessages(prev => [...prev, userMsg, assistantMsg]);
-      speak(response.answer);
       setVoiceState('SPEAKING');
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Voice processing failed. Please try typing your question.";
-      setErrorMessage(msg);
-      setVoiceState('ERROR');
-    }
-  }, [stopRecording, conversationId, speak]);
 
-  const sendTextMessage = useCallback(async (text: string) => {
-    if (!text.trim()) return;
+      // Start synchronized streaming playback simultaneously
+      handleStartSpeakingWithStream(response.answer, assistantMsgId);
+    } catch {
+      // Local fallback for offline / server reload
+      const userText = browserTranscript || "What's your #1 superpower?";
+      const fallbackAnswer = getLocalFallbackAnswer(userText);
 
-    clearError();
-    stopTTS();
-    setVoiceState('PROCESSING');
-
-    const currentConvId = conversationId || `conv-${Date.now()}`;
-
-    const userMsg: Message = {
-      id: `msg-${Date.now()}-user`,
-      role: 'user',
-      content: text.trim(),
-      isVoice: false,
-      timestamp: new Date()
-    };
-
-    setMessages(prev => [...prev, userMsg]);
-
-    try {
-      const response = await apiService.sendChatMessage(currentConvId, text.trim());
-
-      const assistantMsg: Message = {
-        id: `msg-${Date.now()}-assistant`,
-        role: 'assistant',
-        content: response.answer,
+      const userMsg: Message = {
+        id: `msg-${Date.now()}-user`,
+        role: 'user',
+        content: userText,
+        transcript: userText,
+        isVoice: true,
         timestamp: new Date()
       };
 
-      setMessages(prev => [...prev, assistantMsg]);
-      speak(response.answer);
-      setVoiceState('SPEAKING');
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Connection problem. Please check your network and try again.";
-      setErrorMessage(msg);
-      setVoiceState('ERROR');
-    }
-  }, [clearError, stopTTS, conversationId, speak]);
+      const assistantMsgId = `msg-${Date.now()}-assistant`;
+      const assistantMsg: Message = {
+        id: assistantMsgId,
+        role: 'assistant',
+        content: '',
+        streamingText: '',
+        isStreaming: true,
+        timestamp: new Date()
+      };
 
-  const replayLastSpeech = useCallback(() => {
-    replayTTS();
-  }, [replayTTS]);
+      setMessages(prev => [...prev, userMsg, assistantMsg]);
+      setVoiceState('SPEAKING');
+      handleStartSpeakingWithStream(fallbackAnswer, assistantMsgId);
+    }
+  }, [stopRecording, conversationId, handleStartSpeakingWithStream]);
+
+  const sendTextMessage = useCallback(
+    async (text: string) => {
+      if (!text.trim()) return;
+
+      clearError();
+      clearStreamTimer();
+      stopTTS();
+      setVoiceState('PROCESSING');
+
+      const currentConvId = conversationId || `conv-${Date.now()}`;
+
+      const userMsg: Message = {
+        id: `msg-${Date.now()}-user`,
+        role: 'user',
+        content: text.trim(),
+        isVoice: false,
+        timestamp: new Date()
+      };
+
+      const assistantMsgId = `msg-${Date.now()}-assistant`;
+      const assistantMsg: Message = {
+        id: assistantMsgId,
+        role: 'assistant',
+        content: '',
+        streamingText: '',
+        isStreaming: true,
+        timestamp: new Date()
+      };
+
+      setMessages(prev => [...prev, userMsg, assistantMsg]);
+
+      try {
+        const response = await apiService.sendChatMessage(currentConvId, text.trim());
+        setVoiceState('SPEAKING');
+        handleStartSpeakingWithStream(response.answer, assistantMsgId);
+      } catch {
+        // Fallback gracefully to local personality response
+        const fallbackAnswer = getLocalFallbackAnswer(text.trim());
+        setVoiceState('SPEAKING');
+        handleStartSpeakingWithStream(fallbackAnswer, assistantMsgId);
+      }
+    },
+    [clearError, clearStreamTimer, stopTTS, conversationId, handleStartSpeakingWithStream]
+  );
 
   const stopSpeech = useCallback(() => {
+    clearStreamTimer();
     stopTTS();
+    // Complete any active streaming messages immediately
+    if (activeAssistantMsgIdRef.current) {
+      setMessages(prev =>
+        prev.map(m =>
+          m.id === activeAssistantMsgIdRef.current
+            ? { ...m, isStreaming: false }
+            : m
+        )
+      );
+    }
     setVoiceState('IDLE');
-  }, [stopTTS]);
+  }, [clearStreamTimer, stopTTS]);
+
+  const replayLastSpeech = useCallback(() => {
+    const lastAssistant = [...messages].reverse().find(m => m.role === 'assistant');
+    if (lastAssistant && lastAssistant.content) {
+      stopSpeech();
+      setVoiceState('SPEAKING');
+      handleStartSpeakingWithStream(lastAssistant.content, lastAssistant.id);
+    } else {
+      replayTTS();
+    }
+  }, [messages, stopSpeech, handleStartSpeakingWithStream, replayTTS]);
 
   return {
     voiceState,
@@ -206,6 +355,7 @@ export function useVoiceBot(): UseVoiceBotReturn {
     errorMessage,
     micPermission,
     isSpeakingTTS,
+    currentSentenceIndex,
     startVoiceRecording,
     stopVoiceRecording,
     sendTextMessage,

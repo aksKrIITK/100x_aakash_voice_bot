@@ -9,6 +9,9 @@ export interface Message {
   timestamp: Date;
   isVoice?: boolean;
   transcript?: string;
+  isStreaming?: boolean;
+  streamingText?: string;
+  activeSentenceIndex?: number;
 }
 
 export interface Conversation {
@@ -17,3 +20,4 @@ export interface Conversation {
   createdAt: Date;
   updatedAt: Date;
 }
+

@@ -23,21 +23,30 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# Configure CORS
-origins = settings.CORS_ORIGINS if isinstance(settings.CORS_ORIGINS, list) else [settings.CORS_ORIGINS]
+# Internal processing and error middleware (inner layer)
+app.add_middleware(ProcessingTimeAndSecurityMiddleware)
 
+# Configure CORS as the outermost layer so all requests and error responses receive CORS headers
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins if origins else ["*"],
-    allow_origin_regex=r"https://.*\.vercel\.app",
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:8000",
+        "http://127.0.0.1:8000",
+        "https://100x-aakash-voice-bot.vercel.app"
+    ],
+    allow_origin_regex=r"^https?://.*",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"]
 )
 
-app.add_middleware(ProcessingTimeAndSecurityMiddleware)
-
 app.include_router(api_router)
+
 
 
 @app.get("/")

@@ -50,6 +50,7 @@ export const VoiceBot: React.FC = () => {
             <AudioVisualizer
               audioData={audioData}
               isListening={voiceState === 'LISTENING'}
+              isSpeaking={voiceState === 'SPEAKING'}
             />
           </div>
 

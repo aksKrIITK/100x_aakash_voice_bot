@@ -2,60 +2,70 @@ from typing import Dict
 
 GOLDEN_ANSWERS: Dict[str, str] = {
     "life_story": (
-        "I studied Electrical Engineering at IIT Kanpur and later International Politics at JNU, building strong analytical, research, and problem-solving skills."
-        "Eventually, I realized I wanted to build products directly, so I moved into software engineering. "
-        "Over the years, I progressed to Lead Backend Engineer at WorldRef, leading production AI systems and a backend team, and earlier also founded Godizy, building a SaaS product end-to-end. "
-        "Now, I'm deeply focused on agentic AI systems, FastAPI, Java Spring Boot, React, PostgreSQL, and building reliable software."
+        "Yeah, so... my journey started at IIT Kanpur where I studied Electrical Engineering, and later I spent time studying International Politics at JNU while preparing for the civil services. "
+        "That research-heavy phase really taught me how to break down high-stakes, ambiguous problems. "
+        "When I moved into software engineering, I founded Godizy, a SaaS platform for Indian SMBs that I grew to 10 paying customers, and led the backend team at WorldRef building production AI and RAG pipelines. "
+        "Right now, what drives me is designing resilient backend microservices with FastAPI and Spring Boot, and building agentic AI architectures with LangGraph."
     ),
     "superpower": (
-        "My #1 superpower is learning quickly and turning that learning into practical, working software. "
-        "When I encounter an unfamiliar technology—whether it's an agentic framework like LangGraph, vector retrieval, or complex backend infrastructure—I don't just learn syntax; "
-        "I understand the core mechanics, build a fast prototype, test edge cases, and rapidly turn it into a clean, reliable production system."
+        "Hmm... if I had to pick one superpower, it's definitely my ability to take complex, ambiguous technical paradigms and rapidly turn them into reliable production software. "
+        "You know... whether it was architecting a LangGraph Supervisor-Specialist agentic platform, cutting a critical reporting API latency by 96% at WorldRef, or building a full SaaS product from scratch at Godizy... "
+        "I dive straight into first principles, build quick prototypes to test failure modes, and ship rock-solid systems."
     ),
     "growth_areas": (
-        "The top three areas I'm actively working to grow in are: "
-        "first, technical communication—explaining complex architecture decisions simply to non-technical stakeholders; "
-        "second, product and business thinking—connecting engineering choices directly to customer value and business outcomes; "
-        "and third, aggressive prioritization—learning to say no to intriguing side-ideas so I can execute the single highest-impact task with consistency."
+        "Right, so... there are three specific areas I'm actively focusing on right now. "
+        "First is executive communication, distilling complex distributed system trade-offs into crisp, intuitive summaries for non-technical stakeholders. "
+        "Second is business empathy, ensuring every microservice optimization maps directly to customer conversion and business ROI. "
+        "And third is ruthless prioritization, learning to say no to interesting technical side-quests to focus 100% on the single highest-impact problem."
     ),
     "misconceptions": (
-        "A common misconception coworkers might have initially is that because I'm relatively quiet during early technical discussions, I might not be fully engaged. "
-        "In reality, I'm mentally decomposing the problem, evaluating edge cases, and mapping out the system architecture before proposing a clean, structured solution."
+        "Honestly... one misconception people might have when they first work with me is that... "
+        "because I tend to stay quiet during early design brainstorms, they might wonder if I'm fully engaged. "
+        "In reality, I'm just quietly mapping the system out in my head, stress-testing edge cases, thinking through database schema boundaries, and structuring a clean solution before I speak up."
     ),
     "pushing_boundaries": (
-        "I push my boundaries by taking ownership of ambiguous, uncharted projects where there is no pre-existing template to copy. "
-        "Whether it's building autonomous agent workflows, optimizing low-latency voice pipelines, or launching a SaaS product from scratch, I put myself in situations where I have to learn on the fly and iterate until it works reliably."
+        "You know... I push my boundaries by throwing myself into uncharted territory where there are no ready-made tutorials. "
+        "Whether it was founding Godizy solo and doing direct sales outreach to local Indian business owners, or designing real-time multi-agent workflows with MCP tool integration and ACL pgvector RAG from scratch... "
+        "I thrive when I'm tackling ambiguity and learning on the fly."
+    ),
+    "worldref_experience": (
+        "At WorldRef, I progressed from Software Engineer to Lead Backend Engineer, leading a team of two. "
+        "I built our entire AI layer end-to-end, including embedding-based RFQ matching evaluated across 3,000+ RFQs, seller scoring across 5,000+ records, and quotation parsing. "
+        "I also redesigned our data models for 6 core microservices, introduced Redis caching to cut p95 latency by 40%, and optimized an unindexed 4-minute batch query down to under 10 seconds."
+    ),
+    "godizy_experience": (
+        "Godizy was an incredible learning experience for me. I founded it to help Indian SMBs like clinics, restaurants, and schools establish a digital presence and automate operations. "
+        "I built the multi-tenant platform using Spring Boot, FastAPI, React, and MySQL, and handled everything from system architecture to pricing tiers and direct customer sales, growing it to 10 paying customers."
+    ),
+    "education_and_jnu": (
+        "I graduated with a B.Tech in Electrical Engineering from IIT Kanpur, which gave me strong fundamentals in algorithms, computing, and math. "
+        "Later, I pursued a Master's in International Politics at JNU while preparing for the civil services. "
+        "That experience was intense and research-heavy—it completely transformed how I analyze complex systemic trade-offs and approach debugging today."
+    ),
+    "handling_uncertainty": (
+        "Honestly, whenever I encounter something I don't know, I believe in absolute intellectual honesty. "
+        "I never guess or fake confidence. I clearly state what I don't know, break down the problem into first principles, study the official documentation or source code, and build small test cases until I have a verified answer."
+    ),
+    "tech_stack_deepdive": (
+        "My core stack is Python with FastAPI and Java with Spring Boot on the backend, React and TypeScript on the frontend, and PostgreSQL with Redis for persistence and caching. "
+        "On the GenAI side, I work deeply with LangGraph, LangChain, pgvector for RAG pipelines, MCP tool connectors, and containerized deployments using Docker, Kubernetes, and AWS."
     ),
     "strengths": (
-        "My key strengths are fast learning, analytical problem-solving, and persistent debugging. "
-        "I enjoy peeling back abstractions to understand how tools work under the hood, and I bring a calm, structured approach to resolving complex system failures."
+        "Look... my core strengths come down to rapid learning, analytical depth, and high grit. "
+        "I genuinely enjoy peeling back abstractions to understand how frameworks work under the hood, and when a production incident hits, I stay calm, isolate the telemetry, and solve the root cause systematically."
     ),
     "weaknesses": (
-        "Sometimes I get so engrossed in perfecting an elegant technical architecture that I have to remind myself to step back and prioritize immediate delivery over technical perfectionism."
+        "Hmm... candidly, sometimes I get so fascinated by architecting the most elegant, scalable distributed solution that I have to actively remind myself to pause, zoom out, and ask: what is the simplest, most pragmatic solution that solves the user's immediate problem today?"
     ),
     "motivation": (
-        "I'm motivated by craft and tangible impact—taking an abstract, ambiguous problem and building a fast, reliable software system that users genuinely find valuable."
+        "What really drives me is the craft of building high-impact software. "
+        "There is nothing quite like taking messy, unstructured requirements and engineering a fast, reliable, and elegant system that real users depend on every single day."
     ),
-    "career": (
-        "I want to build high-scale, intelligent software systems and agentic AI products. "
-        "My goal is to grow as an impactful Staff engineer and tech lead who can architect robust backend infrastructure while shaping product vision."
-    ),
-    "learning": (
-        "I learn best by building. I start by understanding core concepts, writing exploratory prototypes, reading official documentation, and breaking down system failures until I develop strong mental models."
-    ),
-    "failure": (
-        "I view failures as high-signal feedback. When something fails—whether a bug in production or a missed optimization—I analyze the root cause objectively, document lessons learned, and implement systemic safeguards."
-    ),
-    "risk": (
-        "I'm comfortable taking calculated risks when exploring new technologies or architectural patterns, as long as we maintain reliable fallbacks and test boundary conditions thoroughly."
-    ),
-    "decision_making": (
-        "I make decisions by gathering empirical data, weighing trade-offs explicitly (simplicity vs. scalability), and keeping user experience as the ultimate source of truth."
+    "career_goals": (
+        "Looking forward, my goal is to grow as an impactful technical leader architecting large-scale distributed AI systems and autonomous agent platforms—bridging deep backend engineering with intuitive product experiences."
     ),
     "work_style": (
-        "My work style is structured, direct, and collaborative. I prefer clear async documentation, focused deep-work blocks, and honest, humble communication with teammates."
-    ),
-    "future": (
-        "In the future, I see myself pushing the frontiers of AI voice agents, autonomous developer tools, and resilient distributed backend platforms."
+        "My work style is focused, transparent, and high-ownership. "
+        "I value deep-work blocks for system design and coding, combined with clear asynchronous documentation, paired architecture reviews, and humble, constructive team communication."
     )
 }

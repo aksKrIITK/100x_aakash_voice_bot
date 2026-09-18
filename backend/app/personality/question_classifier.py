@@ -1,59 +1,66 @@
 import re
-from typing import Optional
+from typing import Optional, Dict, List
 
-# Keyword map for deterministic intent classification
-INTENT_PATTERNS = {
+INTENT_PATTERNS: Dict[str, List[str]] = {
     "life_story": [
-        r"life story", r"journey", r"tell me about yourself", r"who are you", r"your background",
-        r"education", r"iit kanpur", r"jnu", r"where did you study", r"introduce yourself",
-        r"story in a few sentences", r"know about your life", r"tell us about your life"
+        r"life story", r"tell me about yourself", r"who are you", r"background",
+        r"introduce yourself", r"your journey", r"overview of yourself", r"walk me through your resume"
     ],
     "superpower": [
-        r"superpower", r"#1 superpower", r"number 1 superpower", r"best at", r"biggest strength",
-        r"greatest strength", r"top skill", r"what are you best at", r"stand out", r"what is your superpower",
-        r"coworkers say your superpower"
+        r"superpower", r"super power", r"greatest strength", r"best skill",
+        r"what makes you unique", r"what are you best at", r"special power"
     ],
     "growth_areas": [
-        r"growth area", r"improve", r"want to grow", r"areas to grow", r"working on",
-        r"top 3 areas", r"development goals", r"top 3 areas you'd like to grow", r"areas you'd like to grow"
+        r"grow in", r"areas to grow", r"growth area", r"improve on",
+        r"top 3 areas", r"what do you want to learn", r"areas of improvement"
     ],
     "misconceptions": [
-        r"misconception", r"coworker", r"colleague", r"misunderstand", r"what do people get wrong",
-        r"wrong impression", r"misconception do your coworkers have", r"coworkers have about you"
+        r"misconception", r"misunderstand", r"coworker", r"colleague think",
+        r"first impression", r"wrong impression", r"people get wrong about you"
     ],
     "pushing_boundaries": [
-        r"push.*limit", r"push.*boundar", r"challenge yourself", r"step out of.*comfort",
-        r"comfort zone", r"overcome limit", r"push your boundaries", r"boundaries and limits"
+        r"push.*boundar", r"push.*limit", r"comfort zone", r"challenging project",
+        r"difficult situation", r"take on challenges", r"step out of your comfort"
+    ],
+    "worldref_experience": [
+        r"worldref", r"lead backend", r"rfq", r"seller matching", r"quotation parsing",
+        r"latency reduction", r"4 minute", r"unindexed query", r"mentoring", r"backend team"
+    ],
+    "godizy_experience": [
+        r"godizy", r"founder", r"startup", r"saas", r"10 paying", r"smb", r"solo founder"
+    ],
+    "education_and_jnu": [
+        r"iit", r"kanpur", r"electrical engineering", r"jnu", r"international politics",
+        r"school", r"college", r"university", r"degree", r"upsc", r"civil services"
+    ],
+    "handling_uncertainty": [
+        r"\b(?:when|if|what if)\s+you\s+(?:don't|dont|do not)\s+know\b",
+        r"\bhow\s+do\s+you\s+handle\s+(?:unknowns?|uncertainty|what you don't know)\b",
+        r"\bwhen\s+you\s+(?:get\s+stuck|face\s+something\s+unknown)\b",
+        r"\bwhat\s+do\s+you\s+do\s+when\s+you\s+don't\s+know\b"
+    ],
+    "tech_stack_deepdive": [
+        r"\b(?:tech|take|text)\s*stack\b", r"\bskills?\b", r"\btechnolog(?:y|ies)\b",
+        r"\bframeworks?\b", r"\blanguages?\b", r"\bjava\b", r"\breact\b", r"\bpython\b",
+        r"\bfastapi\b", r"\bspring\s*boot\b", r"\bbackend\s*stack\b", r"\bfrontend\s*stack\b",
+        r"\blanggraph\b", r"\blangchain\b", r"\bpostgres\b", r"\bredis\b", r"\bpgvector\b",
+        r"\brag\b", r"\bdocker\b", r"\bkubernetes\b", r"\btools?\s+you\s+use\b",
+        r"\bdatabases?\b", r"\bdbms\b", r"\bsql\b", r"\bnosql\b", r"\bmysql\b", r"\bcaching\b"
     ],
     "strengths": [
-        r"strength", r"strongest skill", r"good at", r"capabilities"
+        r"strength", r"what are you good at", r"core competencies", r"technical strength"
     ],
     "weaknesses": [
-        r"weakness", r"flaw", r"stumble", r"downside", r"limitation"
+        r"weakness", r"flaw", r"downside", r"limitation", r"where do you struggle"
     ],
     "motivation": [
-        r"motivat", r"inspir", r"what drives you", r"why do you build", r"passion"
+        r"motivat", r"inspir", r"what drives you", r"why do you build", r"passion", r"get out of bed"
     ],
-    "career": [
-        r"career", r"future goal", r"where do you see yourself", r"ambition", r"staff engineer"
-    ],
-    "learning": [
-        r"how do you learn", r"learning style", r"new tech", r"pick up tech"
-    ],
-    "failure": [
-        r"failure", r"mistake", r"handled a bug", r"production incident", r"failed project"
-    ],
-    "risk": [
-        r"risk", r"taking risks", r"risk tolerance"
-    ],
-    "decision_making": [
-        r"decision", r"trade-off", r"make decisions", r"choose technology"
+    "career_goals": [
+        r"career goal", r"future", r"where do you see yourself", r"next 5 years", r"ambition"
     ],
     "work_style": [
-        r"work style", r"how do you work", r"teamwork", r"collaboration", r"deep work"
-    ],
-    "future": [
-        r"future", r"next 5 years", r"upcoming goals", r"what is next"
+        r"work style", r"how do you work", r"teamwork", r"collaboration", r"deep work", r"code review"
     ]
 }
 
@@ -61,10 +68,8 @@ INTENT_PATTERNS = {
 def classify_question_intent(question: str) -> Optional[str]:
     """Deterministically classifies user question into a golden answer category."""
     cleaned = question.lower().strip()
-    
-    for category, patterns in INTENT_PATTERNS.items():
-        for pattern in patterns:
-            if re.search(pattern, cleaned):
-                return category
-                
+    for intent, patterns in INTENT_PATTERNS.items():
+        for pat in patterns:
+            if re.search(pat, cleaned):
+                return intent
     return None

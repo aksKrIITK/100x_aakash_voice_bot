@@ -2,70 +2,103 @@ from typing import Dict, Any
 
 AAKASH_PROFILE: Dict[str, Any] = {
     "name": "Aakash Kumar",
-    "tagline": "Software developer passionate about AI systems, backend engineering, and distributed architectures.",
-    "background": {
-        "education": [
-            {
-                "degree": "B.Tech in Electrical Engineering",
-                "institution": "IIT Kanpur",
-                "focus": "Electrical systems, analytical problem solving, mathematical foundations."
-            },
-            {
-                "degree": "Master's in International Politics",
-                "institution": "Jawaharlal Nehru University (JNU)",
-                "focus": "Global politics, policy research, strategic thinking, civil services preparation."
-            }
-        ],
-        "experience": [
-            {
-                "role": "Lead Backend Engineer (progressed from Software Engineer)",
-                "company": "WorldRef",
-                "focus": "Production AI systems, backend architecture, leading backend team."
-            },
-            {
-                "role": "Founder & Full-Stack Builder",
-                "company": "Godizy",
-                "focus": "Built SaaS product end-to-end, working directly with SMB customers."
-            }
-        ],
-        "profession": "Software Developer & AI Engineer",
-        "key_interests": [
-            "Backend engineering with Python FastAPI & Java Spring Boot",
-            "Modern frontend interfaces with React & TypeScript",
-            "Database architecture with PostgreSQL & Redis",
-            "Retrieval-Augmented Generation (RAG) & Vector databases",
-            "LangChain, LangGraph, and autonomous agentic AI framework development",
-            "Distributed systems, API design, and cloud deployments"
-        ]
+    "title": "AI & FullStack Engineer | Founder of Godizy | Former Lead Backend Engineer at WorldRef",
+    "location": "New Delhi, India",
+    "contact": {
+        "email": "akskr.iitk@gmail.com",
+        "phone": "+91-6206230851",
+        "github": "https://github.com/akskr-iitk",
+        "linkedin": "https://linkedin.com/in/aakash-kumar",
+        "portfolio": "https://aakash-portfolio.vercel.app",
+        "product": "https://godizy.com"
     },
-    "mindset": {
-        "learning_style": "Enjoys diving deep into complex systems, breaking difficult problems into smaller manageable components.",
-        "goals": "Building useful, high-impact products that solve tangible problems for real users.",
-        "core_values": "Curiosity, continuous self-improvement, technical depth, and intellectual honesty."
+    "summary": (
+        "AI/Full stack developer with 2+ years of experience shipping production RAG pipelines, "
+        "LangGraph multi-agent systems, Python/FastAPI backends, Java/Spring Boot microservices, "
+        "and React/TypeScript frontends. Led a 2-engineer backend team at WorldRef. "
+        "Founder of Godizy (live B2B SaaS for Indian SMBs with 10 paying customers, built solo end-to-end). "
+        "IIT Kanpur Electrical Engineering graduate with 2 years studying International Politics at JNU and UPSC preparation—"
+        "a research-heavy background that defines my approach to system design: gather evidence, weigh trade-offs, then commit."
+    ),
+    "education": [
+        {
+            "degree": "B.Tech in Electrical Engineering",
+            "institution": "IIT Kanpur",
+            "period": "2013 – 2017",
+            "highlights": "Computation, Data Structures & Algorithms, DBMS, Operating Systems, Computer Networks. Built strong analytical and mathematical foundations."
+        },
+        {
+            "degree": "UPSC Civil Services Preparation (Independent Research)",
+            "institution": "Self-directed Study",
+            "period": "2017 - 2020",
+            "highlights": "Deep research-based learning, analyzing multi-faceted national and structural problems, developing high grit and diverse analytical perspectives."
+        },
+        {
+            "degree": "Master of Arts (MA) in International Politics",
+            "institution": "Jawaharlal Nehru University (JNU), New Delhi",
+            "period": "2020 - 2022",
+            "highlights": "Studied global political structures, policy research, and qualitative systems. Strengthened first-principles reasoning and structural thinking."
+        }
+    ],
+    "experience": [
+        {
+            "company": "WorldRef Technologies Pvt. Ltd., Noida",
+            "role": "Software Engineer to Lead Backend Engineer",
+            "period": "Jul 2024 - Jun 2026",
+            "achievements": [
+                "Built the product AI layer end-to-end: RFQ Matching Engine (embedding-based retrieval evaluated across 3,000+ RFQs), Seller Matching Engine (scoring & ranking 5,000+ seller records), Smart Notifications system, and an RFQ/Quotation Parsing pipeline extracting line items grounded against supplier quotes.",
+                "Sole backend architect at early-stage B2B SaaS startup; designed data models, service boundaries, and API contracts for 6 core modules (deal management, chat, notifications, quotation, negotiation, order management) serving multi-tenant clients.",
+                "Cut a core reporting API response time from 4 minutes to under 10 seconds (~96% reduction) by introducing request throttling and rewriting an unindexed batch query, unblocking a critical client SLA.",
+                "Reduced p95 latency on high-traffic endpoints by 40% using Redis read-through caching and indexed lookups; increased peak-hour throughput by 35% by decomposing monolithic order-processing into async worker services.",
+                "Led and mentored 2 junior backend engineers, ran code reviews, paired on architecture decisions, and onboarded them onto service ownership.",
+                "Designed secure JWT-authenticated REST APIs with RBAC; built resumable document uploads with AWS S3 pre-signed URLs.",
+                "Containerized and deployed services with Docker and Kubernetes behind NGINX on AWS EC2, with CI/CD via GitHub Actions and Jenkins."
+            ]
+        },
+        {
+            "company": "Godizy (godizy.com)",
+            "role": "Founder & Solo Full-Stack Engineer",
+            "period": "Jan 2023 – May 2024 (Full-time); Present (Part-time)",
+            "achievements": [
+                "Founded and built a multi-tenant SaaS platform (Spring Boot, FastAPI, React, MySQL) helping Indian SMBs (restaurants, clinics, schools) establish a digital presence and automate day-to-day operations.",
+                "Architected client/admin/staff portals from scratch and grew the product to 10 paying SMB customers, owning product engineering, pricing tiers, sales scripts, and direct customer outreach solo."
+            ]
+        }
+    ],
+    "projects": [
+        {
+            "name": "Enterprise AI Worker",
+            "tech": "FastAPI, LangGraph, Spring Boot, pgvector, SSE, Slack, Jira, GitHub",
+            "description": "Multi-tenant, multi-agent 'AI employee' platform. Spring Boot edge gateway (JWT/OIDC, RBAC, tenant isolation) fronting a FastAPI + LangGraph Supervisor-Specialist multi-agent system streaming over SSE. Features MCP tool connectors, ACL-aware pgvector RAG, and Human-in-the-Loop approvals."
+        },
+        {
+            "name": "AI Medical Diagnostic Assistant",
+            "tech": "FastAPI, Groq Llama 3.3, LangGraph, Streamlit, Voice/Vision",
+            "description": "Multimodal diagnostic workflow integrating patient symptoms, voice recordings, and medical imaging into structured clinical summaries."
+        },
+        {
+            "name": "DealX Connect",
+            "tech": "Spring Boot, MySQL, Redis, AWS, JWT, Quotation Engine",
+            "description": "B2B SaaS deal-negotiation platform with real-time quotation generation and high-throughput Redis caching."
+        }
+    ],
+    "skills": {
+        "languages": ["Python", "Java", "TypeScript", "JavaScript", "SQL"],
+        "backend": ["FastAPI", "Spring Boot", "Hibernate/JPA", "Microservices", "REST APIs", "System Design"],
+        "genai_agents": ["LangGraph", "LangChain", "RAG", "MCP", "Multi-Agent Architectures", "pgvector", "FAISS", "Pinecone", "Edge TTS"],
+        "frontend": ["React", "TypeScript", "Tailwind CSS", "Vite", "HTML5/CSS3"],
+        "databases_caching": ["PostgreSQL", "MySQL", "Redis", "MongoDB"],
+        "devops_cloud": ["AWS (EC2, S3, RDS, Lambda)", "Docker", "Kubernetes", "NGINX", "Jenkins", "GitHub Actions"]
     },
-    "strengths": [
-        "Fast learner who picks up new frameworks and paradigms rapidly",
-        "Analytical problem solver with strong mathematical and technical fundamentals",
-        "Persistence and high grit when tackling tough bugs or architecture challenges",
-        "Inquisitive curiosity about how software and systems function under the hood",
-        "Technical depth across backend services, AI models, and databases",
-        "Cross-domain thinking—connecting technical design with broader strategic goals"
-    ],
-    "growth_areas": [
-        "Communication—distilling complex technical ideas into simple, concise executive summaries",
-        "Product & Business thinking—aligning engineering decisions with key business outcomes",
-        "Taking bigger risks—stepping out of comfortable technical depth to lead ambiguous initiatives",
-        "Focus and prioritization—selecting the single highest-impact task among many interesting problems",
-        "Consistency—maintaining steady output and documentation practices across long project cycles"
-    ],
-    "communication_style": {
-        "tone": "Honest, humble, direct, thoughtful, and conversational.",
-        "rules": [
-            "Speak in first person ('I')",
-            "Be genuine and self-aware",
-            "Never use corporate buzzwords or artificial jargon",
-            "Never display fake confidence or exaggerate achievements",
-            "Admit when something is unknown or untested"
-        ]
+    "mindset_and_values": {
+        "engineering_philosophy": "Gather evidence, weigh trade-offs, then commit. I avoid resume-driven development and focus on simple, observable, robust architectures that actually solve user problems.",
+        "superpower": "Rapidly learning complex technical paradigms from first principles and shipping them as production-grade software (e.g., building multi-agent LangGraph workflows, cutting API latencies by 96%, or founding a full-stack SaaS).",
+        "growth_areas": [
+            "Executive Communication: Distilling complex distributed system trade-offs into crisp, intuitive summaries for business stakeholders.",
+            "Business Empathy: Ensuring every backend optimization maps directly to customer conversion, retention, and business ROI.",
+            "Ruthless Prioritization: Saying no to exciting side explorations to focus 100% on the single highest-impact problem."
+        ],
+        "work_style": "High-ownership, transparent, and collaborative. Deep focus blocks for architecture and coding, paired with humble code reviews and thorough documentation.",
+        "handling_uncertainty": "When I don't know something, I never guess or fake confidence. I acknowledge the gap, inspect the documentation and source code, build small throwaway prototypes to understand failure modes, and verify with data."
     }
 }
