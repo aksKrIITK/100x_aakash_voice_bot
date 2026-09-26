@@ -10,6 +10,21 @@
 
 **Aakash AI** is a production-quality, deployable conversational AI voice bot web application representing Aakash Kumar. Users can interact seamlessly via microphone voice recording or text fallback, receive personality-grounded first-person responses, and hear answers spoken aloud in a realistic Indian English male voice.
 
+## 🎥 Live Demo
+
+### Watch the 3-minute technical walkthrough
+
+[![Watch Aakash AI Voice Bot Demo](YOUR_LOOM_THUMBNAIL_URL)](https://www.loom.com/share/5b5fdeb29da44bfa989a2d2046f6060d)
+
+**In the walkthrough:**
+- Voice interaction
+- Text fallback
+- Persona grounding
+- Multi-turn conversation
+- STT → LLM → TTS pipeline
+- Provider fallback architecture
+- Backend + frontend architecture
+
 ---
 
 ## 🌟 Key Features & Upgrades
@@ -72,7 +87,7 @@ FastAPI Backend (Railway/Render)
 │   ├── tests/                 # Pytest test suite (health, chat, voice, personality)
 │   ├── Dockerfile             # Production container definition
 │   ├── requirements.txt       # Python dependencies (fastapi, uvicorn, edge-tts, etc.)
-│   └── .env                   # Environment variable configuration
+│   └── .env.example                   # Environment variable configuration
 │
 └── frontend/
     ├── src/
@@ -143,7 +158,7 @@ Frontend application will be accessible at `http://localhost:5173`.
 ---
 
 ## 🔑 Environment Variables (`backend/.env`)
-
+replace .env.example to .env , keeping code same 
 ```env
 APP_ENV=development
 HOST=0.0.0.0
